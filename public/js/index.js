@@ -33,11 +33,14 @@ jQuery('#message-form').on('submit', function(e){
 
 	socket.emit('createMessage',{
 		from: 'User',
-		text: jQuery('[name=message]').val()
+		text: jQuery('[name = message]').val()
 	},function(){
 
 	});
+	$("#message-form").trigger("reset");
+
 });
+
 
 var locationButton = jQuery('#send-location');
 locationButton.on('click', function () {
