@@ -2,30 +2,48 @@ const path = require('path');
 const express = require('express');
 const socketIO = require('socket.io');
 const http = require('http');
+
 const {generateMessage, generateLocationMessage} = require('./utils/message');
-
-
+const {isRealString} = require('./utils/validation');
+const {Users} = require('./utils/users');
 
 const port = process.env.PORT || 3000
 const publicPath = path.join(__dirname, '../public');
+
 var app = express();
 var server = http.createServer(app);
+var users = new Users();
 
 var io = socketIO.listen(server);
 io.on('connection',(socket) => {
 	console.log("New user connected !");
 
-	// New user joins in 
-	socket.emit('newMessage', generateMessage('Admin','Welcome new user'));
+	
 
-	// Broadcast that a new user is here
-	socket.broadcast.emit('newMessage',generateMessage('Admin', 'New User joined'));
 
-	// socket.emit('newMessage', {
-	// 	from: "Mike",
-	// 	text: "something happened at that place",
-	// 	createdAt: 12 
-	// });
+	socket.on('join',(params,callback) =>{
+		console.log(params);
+		if(!isRealString(params.name) || !isRealString(params.room)){
+			return callback('Name and Room Name required.')
+		}
+
+		socket.join(params.room);
+		users.removeUser(socket.id);
+		users.addUser(socket.id,params.name,params.room);
+
+		io.to(params.room).emit('updateUserList',users.getUserList(params.room));
+		// New user joins in 
+		socket.emit('newMessage', generateMessage('Admin','Welcome new user'));
+
+		// Broadcast that a new user is here
+		socket.broadcast.emit('newMessage',generateMessage('Admin', `${params.name} has joined the room`));
+
+
+
+
+		callback();
+	});
+
 
 
 	//logging a user message in terminal
@@ -47,7 +65,12 @@ io.on('connection',(socket) => {
 
 
 	socket.on('disconnect', () => {
-		console.log("Disconnected from client !");
+		var user = users.removeUser(socket.id);
+
+		if (user) {
+			io.to(user.room).emit('updateUserList',users.getUserList(user.room));
+			io.to(user.room).emit('newMessage',generateMessage('Admin',`${user.name} has left.`));
+		}
 	});
 });
 

@@ -2,33 +2,32 @@
 <html>
 <head>
 	<title>Chat | Chat App</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1, user-scaleable=no" >
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" >
 	<link rel="stylesheet" type="text/css" href="/css/styles.css">
 
 </head>
+
 <body class="chat">
-	<div class="chat__sidebar">
-		<h3>People</h3>
-		<div id="users"></div>
-	</div>
-
-	<div class="chat__main">
-
-		<ol id="messages" class="chat__messages"></ol>
-		<div class="chat__footer">
-			<form id="message-form">
-				<input id="text-field" type="text" name="message" autofocus autocomplete="off" placeholder="Enter message"><br>
-				<button>Send</button>
-			</form>
-			<button id="send-location">Send Location</button>
-		</div>
 	
-		
+  <div class="chat__sidebar">
+    <h3>People</h3>
+    <div id="users"></div>
+  </div>
 
-	</div>
+  <div class="chat__main">
+    <ol id="messages" class="chat__messages"></ol>
 
-	<script id="message-template">
-		<li class="message"> 
+    <div class="chat__footer">
+      <form id="message-form">
+        <input name="message" type="text" placeholder="Message" autofocus autocomplete="off"/>
+        <button>Send</button>
+      </form>
+      <button id="send-location">Send location</button>
+    </div>
+  </div>
+
+	<script id="message-template" type="text/template">
+		<li class="message">
 		  <div class="message__title">
 		  	<h4>{{from}}</h4>
 		  </div>
@@ -42,13 +41,13 @@
 	</script>
 
 
-	<script id="location-message-template">
+	<script id="location-message-template" type="text/template">
 		<li class="message"> 
 		  <div class="message__title">
 		  	<h4>{{from}}</h4>
 		  </div>
 		  <div class="message__body">
-		  	<a href="{{url}}" target="_blank" >My Current Location</a>
+		  	<a href="{{url}}" target="_blank" >My Current Location </a>
 		  </div>
 		  <div class="message__title">
 		  	<span>{{createdAt}} </span>
@@ -58,8 +57,10 @@
 
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 	<script src="/js/libs/jquery-3.3.1.min.js"></script>
-	<script src="/js/chat.js" ></script>
 	<script src="/js/libs/moment.js"></script>
 	<script src="/js/libs/mustache.js"></script>
+	<script src="/js/libs/deparam.js"></script>
+	<script src="/js/chat.js" ></script>
+	
 </body>
 </html>
